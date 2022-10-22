@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons.js'
 import Filter from './components/Filter.js'
 import PersonForm from './components/PersonForm.js'
-import './App.css'; //Messed around with styles
+import personService from './services/persons.js'
+import Notification from './components/Notification.js'
+import ErrorNotification from './components/ErrorNotification.js'
+import './index.css'; 
 
 
 
@@ -12,12 +14,14 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterStr, setNewFilterStr] = useState('')
+  const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        setPersons(response.data)
+        setPersons(response)
       })
   }
   
@@ -27,13 +31,44 @@ const App = () => {
     event.preventDefault()
     //console.log('button clicked', event.target); 
     if (findDuplicates(newName)) {
-      window.alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        const person = persons.find(n => n.name === newName)
+        //console.log(person);
+        
+        const changedPerson = { ...person, number: newNumber }
+        //console.log(changedPerson);
+        let err = false
+        personService
+          .update(person.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+            setMessage(`Replaced the number of ${newName} with ${newNumber}`)
+            setTimeout(() => {
+            setMessage(null)
+            }, 4000)
+            setNewName('')
+            setNewNumber('')
+        }).catch(error => {
+          setErrorMessage(`Information of '${newName}' has already been removed from the server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 4000)
+          setPersons(persons.filter(n => n.id !== person.id))
+        })  
+    }
     } else {
       const personObj = {
         name: newName,
         number: newNumber
       } 
-      setPersons(persons.concat(personObj))
+      personService.create(personObj).then(res => {
+        setPersons(persons.concat(res))
+        
+      })
+      setMessage(`Added ${newName}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 4000)
       setNewName('')
       setNewNumber('')
     }
@@ -59,12 +94,21 @@ const App = () => {
     return persons.map(obj => obj.name).includes(name)
   }
 
+  const handleRemoval = (person) => {
+    //console.log(`removed ${id}`);
+    window.confirm(`Remove ${person.name}?`)
+    personService.removePerson(person.id).then(
+      setPersons(persons.filter(n => n.id !== person.id))
+    )
+  }
+
   const personsToShow = persons.filter(person => ~person.name.indexOf(filterStr) || ~person.name.toLowerCase().indexOf(filterStr))
 
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <ErrorNotification message={errorMessage} />
+      <Notification message={message} />
       <Filter filterStr={filterStr} handleFilterChange={handleFilterChange} />
       
       <h3>Add a new</h3>
@@ -77,7 +121,7 @@ const App = () => {
 
       <h3>Numbers</h3>
       
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} handleRemoval={handleRemoval}/>
     </div>
   )
 }

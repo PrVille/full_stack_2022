@@ -1,0 +1,27 @@
+body {
+    background-color: #525253;
+    color: #ffffff;
+    padding: 40px;
+    font-family: "Lato", sans-serif;
+    text-align: center;
+}
+
+.msg {
+    color: green;
+    background: white;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+.errMsg {
+    color: red;
+    background: white;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
