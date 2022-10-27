@@ -37,11 +37,16 @@ const App = () => {
         
         const changedPerson = { ...person, number: newNumber }
         //console.log(changedPerson);
-        let err = false
         personService
           .update(person.id, changedPerson)
           .then(returnedPerson => {
+            //console.log("THIS ONE");
+            //console.log(returnedPerson);
+            const err = returnedPerson.name //to invoke error if null
+            
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+            //console.log(persons);
+            
             setMessage(`Replaced the number of ${newName} with ${newNumber}`)
             setTimeout(() => {
             setMessage(null)
@@ -49,28 +54,44 @@ const App = () => {
             setNewName('')
             setNewNumber('')
         }).catch(error => {
-          setErrorMessage(`Information of '${newName}' has already been removed from the server`)
-          setTimeout(() => {
+          //console.log(error);
+          
+          if (error.code === "ERR_BAD_REQUEST") {
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => {
             setErrorMessage(null)
-          }, 4000)
-          setPersons(persons.filter(n => n.id !== person.id))
+            }, 4000)
+          } else {
+            //console.log("here");
+            
+            setErrorMessage(`Information of '${newName}' has already been removed from the server`)
+            setTimeout(() => {
+            setErrorMessage(null)
+            }, 4000)
+            setPersons(persons.filter(n => n.id !== person.id))
+          } 
         })  
-    }
+      }
     } else {
       const personObj = {
         name: newName,
         number: newNumber
       } 
       personService.create(personObj).then(res => {
-        setPersons(persons.concat(res))
-        
+        setPersons(persons.concat(res)) 
+        setMessage(`Added ${newName}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 4000)
+        setNewName('')
+        setNewNumber('')
       })
-      setMessage(`Added ${newName}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 4000)
-      setNewName('')
-      setNewNumber('')
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 4000)
+      }) 
     }
   }
 
@@ -96,13 +117,17 @@ const App = () => {
 
   const handleRemoval = (person) => {
     //console.log(`removed ${id}`);
-    window.confirm(`Remove ${person.name}?`)
-    personService.removePerson(person.id).then(
-      setPersons(persons.filter(n => n.id !== person.id))
-    )
+    if (window.confirm(`Remove ${person.name}?`)) {
+      personService.removePerson(person.id).then(
+        setPersons(persons.filter(n => n.id !== person.id))
+      )
+    } else return
   }
 
+  //console.log(persons);
+  
   const personsToShow = persons.filter(person => ~person.name.indexOf(filterStr) || ~person.name.toLowerCase().indexOf(filterStr))
+
 
   return (
     <div>
