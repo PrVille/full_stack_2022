@@ -2,10 +2,61 @@ GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzNjkzYTc3ZjIwMGNmNzM4NjE1YTkyYiIsImlhdCI6MTY2NzkwNjExN30.rX6qrde63VvB5NaCpGzQPYXcOsd5ftb7NtNhhRcKDO8
 
 {
     "title": "Test title",
     "author": "Test author",
     "url": "Test url",
     "likes": 0
+}
+###Unauthorized REMEMBER TO CHANGE BLOG ID
+DELETE http://localhost:3003/api/blogs/636a4d0a2b469a3c18b1e42f
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJpZCI6IjYzNmE0ZmUxZDM1YjA0MDJmMjg4MzQxMSIsImlhdCI6MTY2NzkxMTgyOSwiZXhwIjoxNjY3OTE1NDI5fQ.FDRcjqBNjBlAU3NW6MdHej6budMBO0yNai-0qgWhGjk
+###Authorized REMEMBER TO CHANGE BLOG ID
+DELETE http://localhost:3003/api/blogs/636a4d0a2b469a3c18b1e42f
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzNjkzYTc3ZjIwMGNmNzM4NjE1YTkyYiIsImlhdCI6MTY2NzkxMTk0NSwiZXhwIjoxNjY3OTE1NTQ1fQ.3MVBTxygqN9kvRcFbSWL8r2I2SzSz0RGfSfrk0Gibz0
+###
+GET http://localhost:3003/api/users
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "root",
+    "name": "Superuser",
+    "password": "salainen"
+}
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "User",
+    "name": "User",
+    "password": "salainen"
+}
+###
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "username": "root",
+    "password": "salainen"
+}
+###
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "username": "User",
+    "password": "salainen"
+}
+###Wrong credentials
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "username": "root",
+    "password": "liiansalainen"
 }
