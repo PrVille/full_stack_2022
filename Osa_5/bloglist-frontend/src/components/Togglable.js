@@ -22,7 +22,7 @@ const Togglable = forwardRef((props, refs) => {
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         {props.children}
         <button onClick={toggleVisibility}>cancel</button>
       </div>
@@ -33,7 +33,7 @@ const Togglable = forwardRef((props, refs) => {
 Togglable.displayName = 'Togglable'
 
 Togglable.propTypes = {
-  butonLabel: PropTypes.string.isRequired
+  buttonLabel: PropTypes.string.isRequired
 }
 
 export default Togglable

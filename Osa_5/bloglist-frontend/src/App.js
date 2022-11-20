@@ -84,6 +84,22 @@ const App = () => {
     }
   }
 
+  const handleBlogLike = async (blog) => {
+    try {
+      const updatedBlog = {
+        user: blog.user.id,
+        likes: blog.likes += 1,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+    } catch (e) {
+      notify('Unable to like', 'error')
+    }
+  }
+
 
   const loginForm = () => (
     <Togglable buttonLabel="login">
@@ -96,6 +112,8 @@ const App = () => {
       <BlogForm addBlog={addBlog} />
     </Togglable>
   )
+
+  let sortedBlogs = blogs.sort(function(a, b){return b.likes - a.likes})
 
   return (
     <div>
@@ -114,8 +132,8 @@ const App = () => {
           </p>
           {blogForm()}
           <div>
-            {blogs.sort(function(a, b){return b.likes - a.likes}).map((blog) => (
-              <Blog key={blog.id} blog={blog} handleBlogRemoval={handleBlogRemoval} user={user} />
+            {sortedBlogs.map((blog) => (
+              <Blog key={blog.id} blog={blog} handleBlogRemoval={handleBlogRemoval} handleBlogLike={handleBlogLike} user={user} />
             ))}
           </div>
         </div>
