@@ -11,10 +11,8 @@ import Togglable from "./components/Togglable"
 import Menu from "./components/Menu.js"
 
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   useMatch,
 } from "react-router-dom"
 
@@ -100,7 +98,6 @@ const App = () => {
         notify(
           `a new blog '${createdBlog.title}' by ${createdBlog.author} added`
         )
-        blogFormRef.current.toggleVisibility()
       })
       .catch((error) => {       
         notify("creating a blog failed: " + error, "alert")
@@ -155,18 +152,18 @@ const App = () => {
 
   if (user === null) {
     return (
-      <>
+      <div className='container'>
         <Notification notification={notification} />
         <LoginForm onLogin={login} />
-      </>
+      </div>
     )
   }
 
   return (
-    <div>
+    <div className='container'>
       <Menu user={user} logout={logout} />
 
-      <h2>blog app</h2>
+      <h2>Blog app</h2>
 
       <Notification notification={notification} />
 
@@ -190,7 +187,8 @@ const App = () => {
           path="/blogs"
           element={
             <div>
-              <Togglable buttonLabel="new blog" ref={blogFormRef}>
+              <h3>Blogs</h3>
+              <Togglable buttonLabel="New blog" ref={blogFormRef}>
                 <NewBlogForm onCreate={createBlog} />
               </Togglable>
 

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types"
 import CommentForm from "./CommentForm.js"
+import { Button, ListGroup } from "react-bootstrap"
 
 const Blog = ({ blog, likeBlog, removeBlog, addComment, user }) => {
   if (!user || !blog) {
@@ -7,15 +8,16 @@ const Blog = ({ blog, likeBlog, removeBlog, addComment, user }) => {
   }
 
   const comments = blog.comments.map((comment, index) => (
-    <li key={index}>
+    <ListGroup.Item key={index}>
       {comment}
-    </li>
+    </ListGroup.Item>
   ))
   const addedBy = blog.user && blog.user.name ? blog.user.name : "anonymous"
   const own = blog.user && user.username === blog.user.username
 
   return (
     <div>
+      <br/>
       <div className="blog">
         <h3>
           {blog.title} by {blog.author}
@@ -24,18 +26,20 @@ const Blog = ({ blog, likeBlog, removeBlog, addComment, user }) => {
           <a href={blog.url}>{blog.url}</a>
         </div>
         <div>
-          {blog.likes} likes{" "}
-          <button onClick={() => likeBlog(blog.id)}>like</button>
+          {blog.likes} Likes{" "}
+          <Button size="sm" onClick={() => likeBlog(blog.id)}>Like</Button>
         </div>
         <div>{addedBy}</div>
         <div>
-          {own && <button onClick={() => removeBlog(blog.id)}>remove</button>}
+          {own && <Button variant='danger' size="sm" onClick={() => removeBlog(blog.id)}>Remove</Button>}
         </div>
       </div>
+      <br/>
       <div className='commenSection'>
-        <h4>comments</h4>
+        <h4>Comments</h4>
         <CommentForm addComment={addComment} id={blog.id} />
-        <ul>{comments}</ul>
+        <br/>
+        <ListGroup variant='flush'>{comments}</ListGroup>
       </div>
     </div>
   )

@@ -5,11 +5,14 @@ const Users = ({ users }) => {
 
   return (
     <div>
-      <Table striped>
+      <br/>
+      <h3>Users</h3>
+      <br/>
+      <Table striped bordered hover size="sm">
         <tbody>
           <tr>
-            <th>user</th>
-            <th>blogs created</th>
+            <th>User</th>
+            <th>Blogs created</th>
           </tr>
           {users.map((user) => (
             <tr key={user.id}>

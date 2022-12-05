@@ -1,22 +1,26 @@
 import { Link } from "react-router-dom"
+import { Table } from "react-bootstrap"
 
 const Blogs = ({ blogs }) => {
-  const style = {
-    padding: 3,
-    margin: 5,
-    borderStyle: "solid",
-    borderWidth: 1,
-  }
-
+  
   return (
     <div>
-      {blogs.map((blog) => (
-        <div key={blog.id} style={style}>
-          <Link to={`/blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
-        </div>
-      ))}
+      <Table striped bordered hover >
+        <tbody>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+          </tr>
+          {blogs.map((blog) => (
+            <tr key={blog.id}>
+              <td>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </td>
+              <td>{blog.author}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   )
 }
