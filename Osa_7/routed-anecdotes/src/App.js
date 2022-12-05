@@ -1,34 +1,42 @@
 import { useState } from "react"
-import { useField } from './hooks'
-import {
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  useMatch,
-} from "react-router-dom"
+import { useField } from "./hooks"
+import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom"
+import { Table, Form, Button, Alert, Navbar, Nav } from "react-bootstrap"
 
 const Menu = () => {
   const padding = {
     paddingRight: 5,
   }
+
   return (
     <div>
-      <Link style={padding} to="/">
-        anecdotes
-      </Link>
-      <Link style={padding} to="/create">
-        create new
-      </Link>
-      <Link style={padding} to="/about">
-        about
-      </Link>
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/">
+                anecdotes
+              </Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/create">
+                create new
+              </Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/about">
+                about
+              </Link>
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
     </div>
   )
 }
 
 const Anecdote = ({ anecdote }) => {
-  
   return (
     <div>
       <div>{anecdote.content}</div>
@@ -42,13 +50,18 @@ const Anecdote = ({ anecdote }) => {
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>
-          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-        </li>
-      ))}
-    </ul>
+    <Table striped>
+      <tbody>
+        {anecdotes.map((anecdote) => (
+          <tr key={anecdote.id}>
+            <td>
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </td>
+            <td>{anecdote.author}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   </div>
 )
 
@@ -86,9 +99,9 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const { reset: resetContent, ...content } = useField('content')
-  const { reset: resetAuthor, ...author} = useField('author')
-  const { reset: resetInfo, ...info} = useField('info')
+  const { reset: resetContent, ...content } = useField("content")
+  const { reset: resetAuthor, ...author } = useField("author")
+  const { reset: resetInfo, ...info } = useField("info")
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -99,34 +112,40 @@ const CreateNew = (props) => {
       info: info.value,
       votes: 0,
     })
-    navigate('/')
+    navigate("/")
   }
 
   const handleReset = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form>
-        <div>
-          content
-          <input {...content} />
-        </div>
-        <div>
-          author
-          <input {...author} />
-        </div>
-        <div>
-          url for more info
-          <input {...info} />
-        </div>
-        <button onClick={handleSubmit}>create</button>
-        <button onClick={handleReset}>reset</button>
-      </form>
+      <Form>
+        <Form.Group>
+          <div>
+            <Form.Label>content:</Form.Label>
+            <input {...content} />
+          </div>
+          <div>
+            <Form.Label>author:</Form.Label>
+            <input {...author} />
+          </div>
+          <div>
+            <Form.Label>url for more info</Form.Label>
+            <input {...info} />
+          </div>
+          <Button variant="primary" onClick={handleSubmit}>
+            create
+          </Button>
+          <Button variant="primary" onClick={handleReset}>
+            reset
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }
@@ -155,16 +174,16 @@ const App = () => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
     setNotification(`a new anecdote ${anecdote.content} created!`)
-    setTimeout(() => {setNotification('')}, 5000)
+    setTimeout(() => {
+      setNotification("")
+    }, 5000)
   }
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
 
-  const match = useMatch('/anecdotes/:id')
+  const match = useMatch("/anecdotes/:id")
 
-  const anecdote = match
-    ? anecdoteById(Number(match.params.id))
-    : null
+  const anecdote = match ? anecdoteById(Number(match.params.id)) : null
 
   const vote = (id) => {
     const anecdote = anecdoteById(id)
@@ -178,12 +197,15 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>Software anecdotes</h1>
       <Menu />
-      {notification}
+      {notification && <Alert variant="success">{notification}</Alert>}
       <Routes>
-        <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote} />} />
+        <Route
+          path="/anecdotes/:id"
+          element={<Anecdote anecdote={anecdote} />}
+        />
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
