@@ -184,13 +184,12 @@ const resolvers = {
       const author = authors.find((a) => {
         return a.name === args.name
       })
-      
+
       if (!author) return null
 
       const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => {
-        a.name === args.name ? updatedAuthor : a
-      })
+      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a))
+
       return updatedAuthor
     },
   },
