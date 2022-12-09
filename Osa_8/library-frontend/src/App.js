@@ -1,9 +1,11 @@
 import { useState } from "react"
-import { useQuery } from "@apollo/client"
+import { useQuery, useApolloClient } from "@apollo/client"
 import Authors from "./components/Authors"
 import Books from "./components/Books"
 import NewBook from "./components/NewBook"
-import { ALL_BOOKS, ALL_AUTHORS } from './queries'
+import LoginForm from './components/LoginForm.js'
+import Recommended from './components/Recommended.js'
+import { ALL_BOOKS, ALL_AUTHORS, USER } from './queries'
 
 const Notify = ({errorMessage}) => {
   if ( !errorMessage ) {
@@ -18,9 +20,12 @@ const Notify = ({errorMessage}) => {
 
 const App = () => {
   const [page, setPage] = useState("authors")
+  const [token, setToken] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const books = useQuery(ALL_BOOKS)
   const authors = useQuery(ALL_AUTHORS)
+  const user = useQuery(USER)
+  const client = useApolloClient()
   
   const notify = (message) => {
     setErrorMessage(message)
@@ -29,21 +34,51 @@ const App = () => {
     }, 10000)
   }
 
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+    setPage('login')
+  }
+
+  const loginView = () => {
+    return (
+      <div>
+        <Notify errorMessage={errorMessage} />
+        <h2>Login</h2>
+        <LoginForm
+          setToken={setToken}
+          setError={notify}
+          setPage={setPage}
+        />
+      </div>
+    )
+  }
+
   return (
     <div>
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button>
+        {!token && <button onClick={() => setPage("login")}>login</button>}
+        {token && <button onClick={() => setPage("add")}>add book</button>}
+        {token && <button onClick={() => setPage("recommend")}>recommend</button>}
+        {token && <button onClick={logout}>logout</button>}
       </div>
 
       <Notify errorMessage={errorMessage} />
 
-      <Authors show={page === "authors"} authors={authors} setError={notify} />
+      {page === 'login' && loginView()}
+
+      <Authors show={page === "authors"} authors={authors} token={token} setError={notify} />
 
       <Books show={page === "books"} books={books} />
 
+      <Recommended show={page === "recommend"} books={books} user={user}  />
+
       <NewBook show={page === "add"} setError={notify}/>
+      
     </div>
   )
 }
