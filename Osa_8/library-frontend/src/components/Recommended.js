@@ -6,7 +6,7 @@ const Recommended = (props) => {
   if (props.books.loading) {
     return <div>loading...</div>
   }
-
+  
   const books = props.books.data.allBooks
   const booksToShow = books.filter((book) =>
     book.genres.includes(props.user.data.me.favouriteGenre)
