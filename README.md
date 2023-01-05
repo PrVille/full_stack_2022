@@ -1,4 +1,7 @@
-# full_stack_2022
+# Full Stack Open 2022 Course
+
+Deep Dive Into Modern Web Development
+https://fullstackopen.com/en/
 
 # [Osa 0](https://github.com/PrVille/full_stack_2022/tree/main/Osa_0)
 # [Osa 1](https://github.com/PrVille/full_stack_2022/tree/main/Osa_1)
